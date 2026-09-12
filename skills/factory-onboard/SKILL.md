@@ -39,6 +39,13 @@ Each row is one context file. A module is **required-by** one or more skills/age
 | `marketing/platforms.md` | every platform posted to, account-switch checks, mechanics, tone defaults | marketing-post, and any on-demand marketing content skill | `factory-marketing-onboard/templates/platforms.md` + starters + that skill |
 | `marketing/content-types/` | one file per content type (how to build it, which platform(s), autonomy mode) + an index | marketing-post | `factory-marketing-onboard/templates/content-type.md` + `content-types-index.md` + that skill |
 | `marketing/schedule.md` | the posting timetable — windows, caps, jitter, pacing, gate type per scheduled content type | marketing-post | `factory-marketing-onboard/templates/schedule.md` + that skill |
+| `ads/platforms.md` | every ad platform, account switch, campaign mechanics, how to read analytics, what to exclude | ads-post, ads-collect, ads-assess | `factory-ads-onboard/templates/platforms.md` + `starters/` + that skill |
+| `ads/budget.md` | the spend envelope, period, per-ad allocation, how the cap is enforced | ads-post, ads-assess | `factory-ads-onboard/templates/budget.md` + that skill |
+| `ads/attribution.md` | the **verified** path from campaign → click → signup → paid, and what isn't measurable yet | ads-collect, ads-assess | `factory-ads-onboard/templates/attribution.md` + that skill |
+| `ads/offers.md` | whether discounts are possible, the mechanism, the floor, how aggressive is safe | ads-create (the build skill) | `factory-ads-onboard/templates/offers.md` + that skill |
+| `ads/qa.md` | the project-specific half of the ads QA checklist — the type floor, claims that always need a live source, copy patterns this project keeps shipping, brand and platform rules | ads-qa (the pre-spend gate) | `factory-ads-qa/templates/qa.md` + that skill |
+> The ads pillar's skills are `factory-ads-onboard` (set up), `factory-ads-create` (build), `factory-ads-qa` (the pre-spend gate) and `factory-ads-post` (launch). A measurement half — a collector agent and a recurring assessment — is not built yet.
+| `ads/strategies/`, `ads/visuals/`, `ads/targeting/`, `ads/ads/` | reusable angles, reusable production methods, reusable (platform-specific) audience presets, and the ads themselves (an ad may be fully self-contained) | ads-create, ads-clone, ads-post | `factory-ads-onboard/templates/strategy.md` + `visual.md` + `targeting.md` + `ad.md` + that skill |
 
 > Keep this table as the single source of truth. When a new skill needs a new context file, add a row here and add its interview + template; a re-run of `/factory-onboard` will detect and offer it automatically.
 
@@ -50,7 +57,7 @@ Each row is one context file. A module is **required-by** one or more skills/age
 Find the repo root (`git rev-parse --show-toplevel`). If there's no `factory/`, create it (and a `factory/.gitignore` with `.state/` so agent watermarks don't get committed). Also create the run-log dirs modules expect: `intake/` (intake runs) and `syncs/` (sync agendas/recaps).
 
 ### 2. Scan and report a status matrix
-For each module in the registry, check whether `factory/<file>` exists — for a directory-shaped module (`marketing/content-types/`), present when the directory exists and has at least an index plus one content-type file, not just when the empty directory exists. Present a compact matrix so the user sees the whole picture at a glance:
+For each module in the registry, check whether `factory/<file>` exists — for a directory-shaped module (`marketing/content-types/`, and the `ads/` bucket directories), present when the directory exists and has real content in it — an index plus at least one file for `content-types/`, at least one ad for `ads/ads/` — not just when the empty directory exists (`ads/strategies/`, `ads/visuals/` and `ads/targeting/` may legitimately stay empty, since a self-contained ad creates none of them). Present a compact matrix so the user sees the whole picture at a glance:
 
 ```
 factory/ status
@@ -75,6 +82,12 @@ Go module by module. For each, ask its questions in small batches (use the AskUs
   `factory-marketing-onboard` and let it run its own hands-on flow (a short setup interview, then
   building the user's first piece of content together, filing what it learns as it goes) — do not
   attempt to fill these three files from questions asked here.
+- **Exception — the `ads/*` modules are not a batch-questions interview either.** Invoke
+  `factory-ads-onboard` and let it run its own hands-on flow (setup interview, then learning each ad
+  platform live by walking a real campaign to the review step without submitting, verifying
+  attribution in the code, and building the first ad together). Do not attempt to fill these files
+  from questions asked here — several of the answers can only come from the live platform and from
+  the product's own code.
 
 **`priority.md` questions**
 - What are the **current priorities**, grouped by horizon — **today**, **this week**, **this month/now** (map to the tracker's T-levels where it helps)? Link to real issues/epics where they exist.
