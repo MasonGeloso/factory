@@ -93,10 +93,11 @@ End with **exactly one** recommendation for the next flight, in this shape:
 
 ## Step 5 — Write it down
 
-- Save the report as `factory/ads/assessments/<YYYY-MM-DD>.md` — dated, append-only history.
-- Append a short results note to each assessed campaign's `ads/<ad-id>/<ad-id>.md`.
-- **Live run only:** deliver it per `factory/communication.md`. **Dry run:** do neither of the
-  platform-facing things, and say at the top of the saved report that it was a dry run.
+- Save the report as `factory/ads/assessments/<YYYY-MM-DD>.md` — dated, append-only history. **This
+  is the only file a dry run writes**, and its first line says it was a dry run.
+- **Live run only:** append a short results note to each assessed campaign's `ads/<ad-id>/<ad-id>.md`,
+  and deliver the report per `factory/communication.md`. A dry run touches neither — it exists so the
+  owner can read the verdict before anything is recorded against a campaign.
 
 ## Report shape
 
