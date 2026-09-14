@@ -29,6 +29,7 @@ flowchart TB
       IMPL --> PLAN["/factory-plan"] --> PR1["/factory-plan-review\n(optional gate)"] --> EXE["/factory-execute"] --> RC["/factory-recheck"] --> REVIEW["/factory-code-review\n(optional PR gate)"] --> QA["/factory-qa\n(required gate)"] --> DEMO["demo-video / demo-terminal"]
       DEMO --> XPL["/factory-explain\n(ad-hoc: plain-English briefing)"]
       PLAN --> RR["/factory-reresearch"] --> PR1
+      PLAN -.->|by hand, optional| PROTO["/factory-prototype\ndisposable UI / schema preview"] -.-> EXE
       QA -.->|FAIL| EXE
     end
 
@@ -132,6 +133,7 @@ In any repo:
 | `factory-implement` | Granular todo list, build, verify — don't stop until done |
 | `factory-recheck` | Fresh-eyes review → PASS/FAIL verdict |
 | `factory-plan-review` | Optional second-opinion review of the *plan*, before any code is written; blocking pre-Execute gate |
+| `factory-prototype` | Optional, hand-invoked: build a disposable, full-effort preview of a task's end state — a real animated UI on a throwaway branch, or a schema/DAG diagram for backend-shaped work — before committing to the real implementation |
 | `factory-code-review` | Optional second-opinion review of the opened PR — runnable by an external CLI agent (e.g. Codex) or in-context; blocking gate right after the PR opens |
 | `factory-qa` | **Required** gate: actually use the feature on the running stack — real user scenarios, desktop + mobile, paper-cuts and polish, real prompts/output over 3–5 examples — then post a QA report with screenshots and get an external second opinion |
 | `factory-remember` | Turn a correction that just happened into a concise rule in the right gate's checklist (plan review / code review / QA) |
