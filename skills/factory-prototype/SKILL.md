@@ -67,11 +67,12 @@ task/plan to decide which track(s) apply; ask the user if it's genuinely ambiguo
    `factory/prototype.md` names. Minimize hand-authored seed data — only fill gaps the real source
    genuinely can't cover, and say explicitly which fields were fabricated versus real.
 3. **Design it, don't lay it out.** Read the repo's existing design system/components first. Where the
-   task needs something the system doesn't already have, design it properly — invoke the
-   `frontend-design` skill by name (if installed) for aesthetic direction, typography, and motion.
-   Default to the effort level Factory expects from any new UI work: highly visual, deliberately
-   animated, built from design first principles — not the safest, most generic version of the screen.
-   No half-built states, no placeholder components standing in for the real design decision.
+   task needs something the system doesn't already have, design it properly — call the Skill tool for
+   [`factory-frontend`](../factory-frontend/SKILL.md) for aesthetic direction, typography, motion, and
+   its pre-ship polish pass. Default to the effort level Factory expects from any new UI work: highly
+   visual, deliberately animated, built from design first principles — not the safest, most generic
+   version of the screen. No half-built states, no placeholder components standing in for the real
+   design decision.
 4. **Build against the real app shell** — real routing, real layout, real state — not an isolated
    component sandbox. It needs to read as "this is what's shipping," not a mood board.
 5. **Show it live.** Stand it up per `factory/deployment.md`'s run instructions and hand the user a

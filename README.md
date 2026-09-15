@@ -83,7 +83,7 @@ The scheduled agents need the **Factory CLI**, which lives inside the plugin. `/
 /factory-cli install       # symlinks ~/.local/bin/factory → the plugin's bin/factory
 ```
 
-After that, `factory agents install ai-pm /path/to/repo` works from any terminal. In plugin mode `factory install` only does the symlink — it never copies skills, and `factory update` defers to `/plugin update`.
+After that, `factory agents install ai-pm /path/to/repo` works from any terminal. In plugin mode `factory install` installs the CLI and copies skills for Codex; Claude Code loads skills from the plugin. `factory update` defers source updates to `/plugin update` and refreshes Codex copies from the current plugin. Use `--target claude` to manage only the Claude Code installation.
 
 ### From a git checkout
 
@@ -93,14 +93,16 @@ cd factory
 ./install.sh
 ```
 
-This copies the skills into `~/.claude/skills/` (any existing same-named skill is backed up to `<name>.bak-<timestamp>`; unchanged skills are skipped). Set `CLAUDE_SKILLS_DIR` to install elsewhere. Skill names are un-namespaced this way: `/factory-intake`.
+This copies the skills into both `~/.claude/skills/` and `${CODEX_HOME:-~/.codex}/skills/`. Existing changed skills are backed up under `${FACTORY_HOME:-~/.claude/factory}/skill-backups/<client>/`; unchanged skills are skipped. Override destinations with `CLAUDE_SKILLS_DIR` or `CODEX_SKILLS_DIR`. Skill names are un-namespaced this way: `/factory-intake`.
 
-Pick one or the other — running both gives every skill a duplicate.
+Use `./install.sh --target codex` (or `--target claude`) to install for one client only. The same `--target` option works with `factory install`, `factory update`, and `factory status`. Codex skills will be available on your next turn.
+
+For Claude Code, choose either the plugin or copied skills to avoid duplicates. If you use the Claude Code plugin, run `./install.sh --target codex` from a checkout to install only the Codex copies.
 
 `install.sh` is a thin wrapper around the **Factory CLI** (`bin/factory`, Python 3, zero dependencies). `factory install` also symlinks the CLI itself onto your PATH (`~/.local/bin/factory` by default — override with `FACTORY_BIN_DIR`), so after the first install you can run `factory` from anywhere:
 
 ```bash
-factory install     # copy the skills into ~/.claude/skills AND link the CLI onto PATH
+factory install     # copy skills for Claude Code + Codex and link the CLI onto PATH
 factory update      # git pull the checkout, then re-install only changed skills
 factory status      # what's installed, and what has updates available
 factory agents      # install / update / remove cron-style agents
@@ -134,6 +136,7 @@ In any repo:
 | `factory-recheck` | Fresh-eyes review → PASS/FAIL verdict |
 | `factory-plan-review` | Optional second-opinion review of the *plan*, before any code is written; blocking pre-Execute gate |
 | `factory-prototype` | Optional, hand-invoked: build a disposable, full-effort preview of a task's end state — a real animated UI on a throwaway branch, or a schema/DAG diagram for backend-shaped work — before committing to the real implementation |
+| `factory-frontend` | Design-system-grade UI standard (aesthetic direction, wireframing, hi-fi prototyping, accessibility/interaction/hierarchy audits, pre-ship polish pass) — invoked by `factory-implement`/`factory-execute` and `factory-prototype` for any task with a real UI surface |
 | `factory-code-review` | Optional second-opinion review of the opened PR — runnable by an external CLI agent (e.g. Codex) or in-context; blocking gate right after the PR opens |
 | `factory-qa` | **Required** gate: actually use the feature on the running stack — real user scenarios, desktop + mobile, paper-cuts and polish, real prompts/output over 3–5 examples — then post a QA report with screenshots and get an external second opinion |
 | `factory-remember` | Turn a correction that just happened into a concise rule in the right gate's checklist (plan review / code review / QA) |
