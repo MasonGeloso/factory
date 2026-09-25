@@ -37,6 +37,7 @@ whole run; do not mix a plugin copy with an older user copy.
 | Re-research | `factory-reresearch` | `~/.claude/skills/factory-reresearch/SKILL.md` |
 | Plan review (optional, pre-Execute gate) | `factory-plan-review` | `~/.claude/skills/factory-plan-review/SKILL.md` — see the exception note below, invocation differs |
 | Execute (build the plan) | `factory-execute` | `~/.claude/skills/factory-execute/SKILL.md` |
+| Frontend/UI standard (only if the task has a real UI surface, called from within Execute) | `factory-frontend` | `~/.claude/skills/factory-frontend/SKILL.md` |
 | Recheck | `factory-recheck` | `~/.claude/skills/factory-recheck/SKILL.md` |
 | Code review (optional, post-PR gate) | `factory-code-review` | `~/.claude/skills/factory-code-review/SKILL.md` — see the exception note below, invocation differs |
 | **QA (always on, blocking)** | `factory-qa` | `~/.claude/skills/factory-qa/SKILL.md` — its Step 6 second opinion also shells out, see the note below |
@@ -163,7 +164,7 @@ Set a todo list with these phases so progress is visible: Plan → Re-research �
    - If `factory/code-review.md` configures an external tool, shell out to it now with its documented invocation, prompt pointing at `factory-plan-review/SKILL.md`'s absolute path and this plan file's path plus the issue reference. Otherwise run `factory-plan-review` yourself via the Skill tool.
    - Read the result's `VERDICT:` line. **`FAIL`** → revise the plan (back to `factory-plan`/`factory-reresearch`) and re-run this gate on the revised plan — do not proceed to Execute on a FAIL. **`PASS`** → continue.
    - Loop here until `PASS` (or the module says disabled/is missing, in which case skip this step entirely — `factory-reresearch` already covered in-context scrutiny of the plan).
-4. **Execute (build the plan)** — call the Skill tool: `factory-execute`. It takes the heavily-researched plan and builds it: granular todo list, one item at a time, verify as you go, don't stop until 100% done.
+4. **Execute (build the plan)** — call the Skill tool: `factory-execute`. It takes the heavily-researched plan and builds it: granular todo list, one item at a time, verify as you go, don't stop until 100% done. **If the plan touches a real UI surface, also call the Skill tool for [`factory-frontend`](../factory-frontend/SKILL.md)** during this phase — it sets the aesthetic/accessibility/interaction bar this run is held to, and its polish-pass procedure is the pre-ship gate for anything UI-facing before Recheck.
 5. **Recheck** — call the Skill tool: `factory-recheck`. If anything is wrong, fix it or go back to plan/re-research. Repeat until genuinely confident — not until you're tired.
 
 Gate: do not proceed to Execute until Plan **and** Re-research have actually been run (the plan file exists) **and, if `factory/plan-review.md` enables it, the plan review gate has returned `PASS`**. Do not proceed to Stand-up until Recheck passes. **Do not proceed to the Demo until the QA gate (Step 6) has returned `PASS`** — that one has no opt-out.
