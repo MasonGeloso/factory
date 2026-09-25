@@ -2,7 +2,7 @@
 """Factory CLI — install the skill suite and manage cron-style Factory agents.
 
 Two sections:
-  * skills  — copy the factory-* skills into your Claude Code user skills dir.
+  * skills  — copy the factory-* skills into your Claude Code and Codex user skills dirs.
   * agents  — install/update/remove cron-style agents (e.g. the AI PM) per repo.
 
 Stdlib only. Run `factory` with no arguments for an interactive menu, or use the
@@ -32,6 +32,8 @@ SKILLS_SRC = REPO_ROOT / "skills"
 AGENTS_SRC = REPO_ROOT / "factory-agents"
 
 SKILLS_DEST = Path(os.environ.get("CLAUDE_SKILLS_DIR", Path.home() / ".claude" / "skills"))
+CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+CODEX_SKILLS_DEST = Path(os.environ.get("CODEX_SKILLS_DIR", CODEX_HOME / "skills"))
 FACTORY_HOME = Path(os.environ.get("FACTORY_HOME", Path.home() / ".claude" / "factory"))
 INSTALLED_JSON = FACTORY_HOME / "installed-agents.json"
 
@@ -40,8 +42,8 @@ IS_MAC = platform.system() == "Darwin"
 # When Factory is installed as a Claude Code plugin, its checkout lives inside
 # the plugin cache and Claude Code loads the skills straight from there. Copying
 # them into ~/.claude/skills as well would give every skill a duplicate, so in
-# plugin mode `install`/`update` only manage the CLI symlink and defer skill
-# updates to `/plugin update`.
+# plugin mode skips Claude skill copies but still installs Codex skills.
+# Source updates are deferred to `/plugin update`.
 CLAUDE_CONFIG_DIR = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude"))
 PLUGIN_DIR = CLAUDE_CONFIG_DIR / "plugins"
 
@@ -133,20 +135,27 @@ def list_skill_dirs() -> list[Path]:
     return sorted(p for p in SKILLS_SRC.iterdir() if p.is_dir())
 
 
-def skills_status() -> list[dict]:
+def skill_targets(args=None) -> list[tuple[str, Path]]:
+    target = getattr(args, "target", "all")
+    return [(name, path) for name, path in
+            (("claude", SKILLS_DEST), ("codex", CODEX_SKILLS_DEST))
+            if target in ("all", name)]
+
+
+def skills_status(args=None) -> list[dict]:
     rows = []
-    if plugin_mode():
-        # Claude Code loads these from the plugin cache; there is no copy to compare.
-        return [{"name": src.name, "state": "loaded (plugin)"} for src in list_skill_dirs()]
-    for src in list_skill_dirs():
-        dest = SKILLS_DEST / src.name
-        if not dest.exists():
-            state = "not installed"
-        elif hash_dir(src) == hash_dir(dest):
-            state = "up to date"
-        else:
-            state = "update available"
-        rows.append({"name": src.name, "state": state})
+    for client, root in skill_targets(args):
+        for src in list_skill_dirs():
+            dest = root / src.name
+            if client == "claude" and plugin_mode():
+                state = "loaded (plugin)"
+            elif not dest.exists():
+                state = "not installed"
+            elif hash_dir(src) == hash_dir(dest):
+                state = "up to date"
+            else:
+                state = "update available"
+            rows.append({"name": f"{client}/{src.name}", "state": state})
     return rows
 
 
@@ -202,52 +211,46 @@ def install_cli(ts: str) -> None:
         say(f'        export PATH="{bindir}:$PATH"')
 
 
-def cmd_install(_args=None) -> None:
-    if plugin_mode():
-        say("Factory is installed as a Claude Code plugin — Claude Code loads the")
-        say(f"skills directly from {SKILLS_SRC}.")
-        say("Skipping the copy into ~/.claude/skills (it would duplicate every skill).")
-        say("Use `/plugin update factory` in Claude Code to pull new versions.")
+def cmd_install(args=None) -> None:
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+    for client, root in skill_targets(args):
+        if client == "claude" and plugin_mode():
+            say(f"Claude Code loads skills directly from {SKILLS_SRC} (plugin).")
+            continue
+        say(f"Installing Factory skills for {client}")
+        say(f"  from: {SKILLS_SRC}")
+        say(f"  to:   {root}")
+        root.mkdir(parents=True, exist_ok=True)
+        # Keep backups outside skill discovery, separated by client.
+        backup_dir = FACTORY_HOME / "skill-backups" / client
+        for src in list_skill_dirs():
+            dest = root / src.name
+            if dest.exists() or dest.is_symlink():
+                if hash_dir(src) == hash_dir(dest):
+                    say(f"  • {src.name} (unchanged)")
+                    continue
+                backup_dir.mkdir(parents=True, exist_ok=True)
+                backup = backup_dir / f"{src.name}.bak-{ts}"
+                shutil.move(str(dest), str(backup))
+                say(f"  • {src.name} (updated → backed up to {backup})")
+            else:
+                say(f"  • {src.name} (new)")
+            shutil.copytree(src, dest)
+        say(f"Done. {len(list_skill_dirs())} skills in {root}.")
         say("")
-        say("Installing CLI")
-        install_cli(datetime.now().strftime("%Y%m%d-%H%M%S"))
-        return
-    say("Installing Factory skills")
-    say(f"  from: {SKILLS_SRC}")
-    say(f"  to:   {SKILLS_DEST}")
-    SKILLS_DEST.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    # Back up replaced skills OUTSIDE the skills dir, so old copies aren't
-    # re-loaded as phantom skills by Claude Code.
-    backup_dir = FACTORY_HOME / "skill-backups"
-    for src in list_skill_dirs():
-        dest = SKILLS_DEST / src.name
-        if dest.exists():
-            if hash_dir(src) == hash_dir(dest):
-                say(f"  • {src.name} (unchanged)")
-                continue
-            backup_dir.mkdir(parents=True, exist_ok=True)
-            backup = backup_dir / f"{src.name}.bak-{ts}"
-            shutil.move(str(dest), str(backup))
-            say(f"  • {src.name} (updated → backed up to skill-backups/{backup.name})")
-        else:
-            say(f"  • {src.name} (new)")
-        shutil.copytree(src, dest)
-    say("")
     say("Installing CLI")
     install_cli(ts)
-    say("")
-    say(f"Done. {len(list_skill_dirs())} skills in {SKILLS_DEST}.")
 
 
-def cmd_update(_args=None) -> None:
+def cmd_update(args=None) -> None:
     """git pull the factory checkout, then re-install changed skills."""
     if plugin_mode():
         say("Factory is installed as a Claude Code plugin — updates come from the")
         say("plugin marketplace, not from this checkout.")
         say("Run `/plugin update factory` inside Claude Code.")
         say("")
-        cmd_status()
+        cmd_install(args)
+        cmd_status(args)
         return
     if (REPO_ROOT / ".git").exists():
         say("Pulling latest factory…")
@@ -261,19 +264,19 @@ def cmd_update(_args=None) -> None:
     else:
         say("Not a git checkout — installing what's on disk.")
     say("")
-    before = {r["name"]: r["state"] for r in skills_status()}
-    cmd_install()
+    before = {r["name"]: r["state"] for r in skills_status(args)}
+    cmd_install(args)
     changed = [n for n, s in before.items() if s != "up to date"]
     say("")
     say("Updated: " + (", ".join(changed) if changed else "nothing (all up to date)."))
 
 
-def cmd_status(_args=None) -> None:
+def cmd_status(args=None) -> None:
     if plugin_mode():
         say(f"Mode: Claude Code plugin ({REPO_ROOT})")
         say("")
     say("Skills:")
-    for r in skills_status():
+    for r in skills_status(args):
         say(f"  {r['state']:>18}  {r['name']}")
     say("")
     say("Agents:")
@@ -842,9 +845,14 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="factory", description="Install Factory skills and manage cron-style agents.")
     sub = p.add_subparsers(dest="cmd")
 
-    sub.add_parser("install", help="copy the factory-* skills into your Claude Code skills dir")
-    sub.add_parser("update", help="git pull the factory checkout, then re-install changed skills")
-    sub.add_parser("status", help="show skill + agent install state and available updates")
+    for command, help_text in (
+        ("install", "copy Factory skills into Claude Code and Codex skills dirs"),
+        ("update", "git pull the factory checkout, then re-install changed skills"),
+        ("status", "show skill + agent install state and available updates"),
+    ):
+        sp = sub.add_parser(command, help=help_text)
+        sp.add_argument("--target", choices=("all", "claude", "codex"), default="all",
+                        help="skill destination (default: all)")
 
     ap = sub.add_parser("agents", help="manage cron-style agents").add_subparsers(dest="acmd")
     ap.add_parser("list", help="list available and installed agents")

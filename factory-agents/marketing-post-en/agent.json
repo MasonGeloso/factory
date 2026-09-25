@@ -1,0 +1,11 @@
+{
+  "id": "marketing-post-en",
+  "title": "Marketing Post Dispatcher (English pillar)",
+  "description": "Sibling of marketing-post, pointed at factory/marketing-en/ instead of factory/marketing/. Every hour, checks that pillar's posting timetable and fires whatever content type(s) are due against @komori_en, respecting per-content-type autonomy and the shared cross-pillar browser lock with marketing-post so the two never fight over the same Chrome profile.",
+  "skill": "factory-marketing-post-en",
+  "setup_skill": "factory-marketing-onboard",
+  "requires_files": ["factory/marketing-en/platforms.md", "factory/marketing-en/content-types/README.md", "factory/marketing-en/schedule.md"],
+  "prompt_file": "prompt.md",
+  "default_interval_minutes": 60,
+  "needs_chrome": true
+}

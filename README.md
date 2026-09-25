@@ -151,6 +151,11 @@ In any repo:
 | `factory-ai-pm` | Scheduled AI Product Manager: read the org's channels, reconcile the tracker |
 | `factory-daily-digest` | Scheduled daily TLDR of activity across the org's systems |
 | `factory-communication-setup` | Reference question-set for `communication.md` (used by `factory-onboard`) |
+| `factory-initiative-start` | Bootstrap a persistent, per-channel "initiative listener" — channel, scouting, scope, deploy behavior |
+| `factory-initiative-listen` | The persistent loop: poll one channel, triage requests, drive them through the light pipeline or escalate to a sub-agent |
+| `factory-listener` | Singleton, cross-initiative triage agent — routes requests to the right initiative's channel or handles general ones itself |
+| `factory-implement-light` | Reduced pipeline for the listeners: plan → critical-only review (asks on borderline) → execute → quick recheck → demo-light → deploy |
+| `factory-demo-light` | Minimum-sufficient proof for a small change — one screenshot, clip, log excerpt, or Artifact link |
 
 `factory-execute` invokes the others by name. `factory-onboard` sets up the `factory/` context all of them read.
 
@@ -179,6 +184,18 @@ factory agents remove  ai-pm /path/to/repo   # unschedule + clean up
 Intervals accept sub-hour (`--interval 5`), hourly (`--interval 120`), or daily (`--interval 1440`) cadences.
 
 Agents are **per-repo**: the target repo must already have a `factory/` directory (run `/factory-intake` once). If the agent needs config that isn't there yet — the AI PM needs `factory/communication.md` — install launches an interactive Claude Code session running the matching setup skill (`factory-communication-setup`), then schedules the agent once the file exists. Installed agents, their wrappers, logs, and last-read state live under `~/.claude/factory/`.
+
+## Initiative listeners (persistent, per-channel — not cron)
+
+A different shape of agent: one long-lived, stateful Claude Code session per channel, run by hand in
+its own terminal, that holds an ongoing conversation about one initiative instead of running cold on a
+schedule. `/factory-initiative-start` bootstraps one (channel, scouting, scope, deploy behavior);
+`/factory-initiative-listen <slug>` is what actually stays open, polling the channel, triaging requests
+through `factory-implement-light` (or escalating big ones to a sub-agent via `/goal /factory-implement`),
+and can be resumed in a fresh terminal by re-running it with the same slug. `/factory-listener` is the
+one singleton, cross-initiative triage agent — routes a request into the right initiative's channel, or
+handles small general ones itself. See `factory-initiative-listen/SKILL.md` for why this pattern doesn't
+live under `factory agents install`.
 
 ## The classification system
 
