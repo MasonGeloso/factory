@@ -18,7 +18,7 @@ never heard of this post, because on the next run they haven't.
 
 ## Inputs required before starting
 
-- **Which post.** Enough to find it uniquely: content type + date, or ticker, or a URL (X/note.com),
+- **Which post.** Enough to find it uniquely: content type + date, a distinctive detail from the post, or a URL,
   or a path under `marketing-archive/`. If ambiguous, ask — don't guess which of several posts on the
   same day the feedback is about.
 - **The feedback itself, verbatim.** Not your paraphrase of it. What's wrong, as the user said it.
@@ -30,14 +30,14 @@ If either is missing, ask. Do not start archaeology on a guess.
 Some content types log a session id directly; most don't. Try in order, stop at the first hit:
 
 1. **Logged session id.** Check the content type's `marketing-archive/<type>/LEDGER.md` row and any
-   per-run evidence folder (e.g. `marketing-archive/mcp-use-case-articles/<run>/evidence/`) for a
+   per-run evidence folder (e.g. `marketing-archive/<type>/<run>/evidence/`) for a
    `session_...` id.
 2. **Transcript search by time + content.** Claude Code session transcripts for this repo live at
-   `~/.claude/projects/-home-hone-code-senki/*.jsonl` (or `-home-hone-code-senki-<worktree>` for a
+   `~/.claude/projects/<repo-path-with-dashes>/*.jsonl` (or `<repo-path-with-dashes>-<worktree>` for a
    worktree run), one file per session, named by session id, `mtime` ≈ when the session ended. Narrow
    by the post's date, then `grep -l` the candidate files for a distinctive phrase from the post
-   (headline, ticker, a sentence fragment) or the content type's own trigger phrase (e.g.
-   `factory-marketing-post`, `reply-radar`, `thread-stories`) — the first line of a cron-fired session
+   (headline, a named entity, a sentence fragment) or the content type's own trigger phrase (e.g.
+   `factory-marketing-post` or the content type's slug) — the first line of a cron-fired session
    is often a `queue-operation`/`ai-title` entry naming exactly which skill ran.
 3. **Confirm the match.** Read enough of the transcript to see it produced *this* post, not just a
    session that ran the same content type on a different day — check the final drafted text in the
@@ -48,7 +48,7 @@ half the point is seeing what the pipeline actually did, not guessing backward f
 
 ## Step 2 — Pull the real artifact
 
-Read the finished piece **verbatim, as published** (the X post, the note.com article, the ledger row's
+Read the finished piece **verbatim, as published** (the social post, the article, the ledger row's
 actual text) — not a summary of it, not the draft two revisions before final if a later revision
 shipped. Read the source-material packet the session gathered too, if the content type builds one
 (filing figures, screenshots, evidence files) — you need it to tell whether the defect was a bad
@@ -82,7 +82,7 @@ The proposed bullet follows the same discipline as `factory-remember`'s rule for
 
 - **Bolded imperative title**, then 1–4 lines: what to look for (or what to do while drafting), plus
   the legitimate exception inline if there is one.
-- **Never reference the originating post.** No dates, no ticker, no "like the 4967 piece" — a rule
+- **Never reference the originating post.** No dates, no names, no "like last Tuesday's piece" — a rule
   that needs its incident re-read to be usable will not get used.
 - **Name real symbols and verify them first** — file paths, config keys, ledger columns — `grep` them
   before writing them down.

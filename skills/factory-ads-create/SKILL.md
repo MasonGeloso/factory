@@ -96,7 +96,7 @@ The two rules that decide whether the result is any good:
    - Simple and meaningful beats dense and impressive. Density is not rigour.
 
 **Generate one graphic per language. Always.** Language is a *generation* parameter, not a
-compositing one — a shared graphic under a swapped headline ships Japanese labels on the English
+compositing one — a shared graphic under a swapped headline ships one language's labels on another's
 export. This has happened three times; assume it will happen again.
 
 **Never hand-edit generated filter geometry.** Erosion, glow and mask effects are anchored per

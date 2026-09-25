@@ -1,6 +1,6 @@
 # Spinning up a new initiative from the general listener
 
-A known, tested pattern (first run end to end in the Komori repo, 2026-09-25). The user talks to the
+A known, tested pattern (first run end to end in a production repo, 2026-09-25). The user talks to the
 `factory-listener` in its channel, names a new stream of work, and wants to be talking to a *separate*
 agent about it a few minutes later without touching a terminal. The general listener does the whole
 setup, then hands off to a fresh session running `factory-initiative-listen <slug>`.

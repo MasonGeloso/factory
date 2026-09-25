@@ -76,7 +76,7 @@ answer differently (e.g. one service has a real dev environment, another doesn't
 
 ## Step 5 — Assign a slug, write the files
 
-1. Pick a short slug (kebab-case, e.g. `translations`, `komori-onboarding`). Check it isn't already a
+1. Pick a short slug (kebab-case, e.g. `translations`, `user-onboarding`). Check it isn't already a
    row in `factory/initiatives.md`.
 2. Write `factory/initiatives/<slug>.md` from [templates/initiative.md](templates/initiative.md),
    filled concretely with everything from Steps 1–4. Leave the Queue and Running log sections

@@ -4,7 +4,7 @@ Accumulated from real rounds. Read this before trusting or dismissing a finding.
 
 ## Reviewers hallucinate missing brand marks and clipped headlines
 
-**Three separate rounds, two different models, reported a missing logo or a clipped Japanese
+**Three separate rounds, two different models, reported a missing logo or a clipped non-English
 headline on creatives where both were plainly present.** Twice on one ad, once on another. It is the
 most common false positive in this gate, and independent reviewers produce it independently — so two
 reviewers agreeing is not evidence.
@@ -34,9 +34,8 @@ creative, and an ad-copy type floor applied to microcopy inside a depicted produ
 Worth the gate's existence on its own:
 
 - **Claims the author flagged and then walked past.** On one ad the author twice noted that real
-  tickers carried invented financial events, and shipped it anyway both times. The gate stopped it.
-- **Negation claims.** "No tips. No signals. Just the documents." — Signals was a real product
-  feature. Nobody fact-checks a denial, including the person who wrote it.
+  company names were paired with invented events, and shipped it anyway both times. The gate stopped it.
+- **Negation claims.** "No X. Just Y." — where X was a real product feature. Nobody fact-checks a denial, including the person who wrote it.
 - **Internal inconsistency.** A screen reading "3 of 3 items" while showing two.
 - **Claim creep.** "Every disclosure", "every answer", "delivered every morning" — each a small
   widening past what the evidence supports.

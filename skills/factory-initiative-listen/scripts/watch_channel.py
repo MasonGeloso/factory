@@ -17,7 +17,7 @@ A failed request is swallowed rather than raised: one rate-limit or blip must no
 that is supposed to stay up for hours.
 
 Usage:
-    python3 watch_channel.py --channel C08PB525VSN --mark ~/.factory/initiative-<slug>.mark \
+    python3 watch_channel.py --channel C0123456789 --mark ~/.factory/initiative-<slug>.mark \
         [--label '#channel-name'] [--env-file /path/to/.env] [--token-env SLACK_BOT_TOKEN] \
         [--poll 30]
 """
