@@ -153,6 +153,7 @@ In any repo:
 | `factory-communication-setup` | Reference question-set for `communication.md` (used by `factory-onboard`) |
 | `factory-initiative-start` | Bootstrap a persistent, per-channel "initiative listener" — channel, scouting, scope, deploy behavior |
 | `factory-initiative-listen` | The persistent loop: poll one channel, triage requests, drive them through the light pipeline or escalate to a sub-agent |
+| `factory-initiative-archive` | Put an initiative on ice: stop its listener, move its channel to an archive category (Discord) or archive it (Slack), mark it archived with paused work and the way back; also unarchives |
 | `factory-listener` | Singleton, cross-initiative triage agent — routes requests to the right initiative's channel or handles general ones itself |
 | `factory-implement-light` | Reduced pipeline for the listeners: plan → critical-only review (asks on borderline) → execute → quick recheck → demo-light → deploy |
 | `factory-demo-light` | Minimum-sufficient proof for a small change — one screenshot, clip, log excerpt, or Artifact link |
@@ -194,8 +195,9 @@ schedule. `/factory-initiative-start` bootstraps one (channel, scouting, scope, 
 through `factory-implement-light` (or escalating big ones to a sub-agent via `/goal /factory-implement`),
 and can be resumed in a fresh terminal by re-running it with the same slug. `/factory-listener` is the
 one singleton, cross-initiative triage agent — routes a request into the right initiative's channel, or
-handles small general ones itself. See `factory-initiative-listen/SKILL.md` for why this pattern doesn't
-live under `factory agents install`.
+handles small general ones itself. `/factory-initiative-archive <slug>` turns one off until you come back
+to it (agent stopped, channel archived, paused work and the way back written down). See
+`factory-initiative-listen/SKILL.md` for why this pattern doesn't live under `factory agents install`.
 
 ## The classification system
 
