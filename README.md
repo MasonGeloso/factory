@@ -150,6 +150,7 @@ In any repo:
 | `factory-weekly-report` | Weekly tech-tree board as a shareable image: what shipped, what's in flight, what's blocked behind what |
 | `factory-ai-pm` | Scheduled AI Product Manager: read the org's channels, reconcile the tracker |
 | `factory-daily-digest` | Scheduled daily TLDR of activity across the org's systems |
+| `factory-design-iso` | Build an interactive isometric line-art "Fig N" figure as one self-contained HTML/SVG file — pressable parts that produce real output, live state readout (adapted from MrBongoC/ai-iso-skill, MIT) |
 | `factory-communication-setup` | Reference question-set for `communication.md` (used by `factory-onboard`) |
 | `factory-initiative-start` | Bootstrap a persistent, per-channel "initiative listener" — channel, scouting, scope, deploy behavior |
 | `factory-initiative-listen` | The persistent loop: poll one channel, triage requests, drive them through the light pipeline or escalate to a sub-agent |
