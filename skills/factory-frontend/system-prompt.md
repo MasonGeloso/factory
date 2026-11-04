@@ -623,6 +623,7 @@ unreviewed deliverable is not.
 - **`make-a-prototype`** — Invoke when the user wants something clickable or interactive. Real state, navigation, validation, loading states, and feedback.
 - **`make-tweakable`** — Invoke when the user wants to adjust a finished design live ("let me play with it", "make this adjustable"). Adds a floating tweak panel for colors, fonts, copy, or layout variants.
 - **`generate-variations`** — Invoke when the user asks for options or alternatives on hi-fi work. 3+ distinct variations across substantive axes (layout, hierarchy, interaction, tone) — basic to bold — in a single file.
+- **`faux-product-ui`** — Invoke for any product illustration that won't really be used: marketing or docs heroes, feature cards, product shots, animated cursor walkthroughs, bento grids. Framing, restraint, choreography, loop, and bento rules, with a frame-by-frame rehearsal.
 
 ## System skills (extract structure)
 
@@ -643,6 +644,7 @@ unreviewed deliverable is not.
 - "Show me a few options" / "explore this" → `wireframe` (low-fi) or `generate-variations` (hi-fi)
 - "Make a deck" / "build a presentation" → `make-a-deck`
 - "Make it interactive" / "build a prototype" → `make-a-prototype`
+- "Mock up a product shot" / "animate a demo of the app" / "build a bento grid" → `faux-product-ui`
 - "Let me play with options" / "make this adjustable" → `make-tweakable`
 - "Extract tokens from this" / "give me a tokens file" → `design-system-extract`
 - "Identify reusable parts" / "build a component library" → `component-extract`

@@ -1,6 +1,6 @@
 ---
 name: factory-frontend
-description: Design-system-grade operating principles and procedures for any frontend/UI work — aesthetic direction, wireframing, hi-fi prototyping, tweak panels, accessibility/interaction/hierarchy audits, and a pre-ship polish pass. Adapted from Trystan-SA's claude-design-system-prompt for Factory's autonomous pipeline (no upfront question rounds — resolve from the task/plan/codebase, state assumptions, keep moving). Invoked by `factory-prototype`'s frontend track and by `factory-implement`/`factory-execute` whenever a task has a real UI surface. Use when the user says "factory frontend", "design this properly", or whenever building or reviewing a UI inside the Factory pipeline.
+description: Design-system-grade operating principles and procedures for any frontend/UI work — aesthetic direction, wireframing, hi-fi prototyping, tweak panels, faux product UI (hero stills, product animations, bento grids), accessibility/interaction/hierarchy audits, and a pre-ship polish pass. Adapted from Trystan-SA's claude-design-system-prompt for Factory's autonomous pipeline (no upfront question rounds — resolve from the task/plan/codebase, state assumptions, keep moving). Invoked by `factory-prototype`'s frontend track and by `factory-implement`/`factory-execute` whenever a task has a real UI surface. Use when the user says "factory frontend", "design this properly", asks for a faux UI, product shot, product demo animation, or bento grid, or whenever building or reviewing a UI inside the Factory pipeline.
 ---
 
 # Factory — Frontend
@@ -33,7 +33,8 @@ defaults, the review procedures — is unchanged from upstream.
    Don't try to invoke them by name through the Skill tool; there's no registration for them.
 3. Chain procedures as the brief calls for — e.g. `frontend-aesthetic-direction` → `wireframe` →
    `make-a-prototype` → `polish-pass` for a greenfield build; `design-system-extract` →
-   `generate-variations` → `polish-pass` when a design system already exists. `polish-pass` (which
+   `generate-variations` → `polish-pass` when a design system already exists; `faux-product-ui` →
+   `polish-pass` for a product illustration, animated demo, or bento grid. `polish-pass` (which
    itself runs `accessibility-audit`, `ai-slop-check`, `interaction-states-pass`, and
    `hierarchy-rhythm-review`) is the standing pre-ship gate — run it before handing any UI back.
 
@@ -49,6 +50,18 @@ defaults, the review procedures — is unchanged from upstream.
 
 If upstream publishes updates worth pulling in, re-diff by hand against the source repo — there is no
 sync mechanism here, this is a point-in-time copy.
+
+## Stageshow lessons (`faux-product-ui`)
+
+[`skills/faux-product-ui.md`](skills/faux-product-ui.md) is distilled from Benji Taylor's
+[Stageshow](https://github.com/benjitaylor/skills/tree/main/stageshow) (MIT), read at commit `8020574`.
+It is a rewrite of the craft rules, not a copy: Stageshow's React kit, gold examples, and `film.mjs`
+checkers are not vendored, so every rule is stated in plain CSS/DOM terms and rehearsal runs on
+`playwright-cli`. Its closing section adapts `polish-pass` for scenes that are images rather than
+applications; the upstream review procedures themselves are unchanged.
+
+For a React project that wants the kit too, `npx skills add benjitaylor/skills --skill stageshow`
+installs it. Its bundled app icons and brand marks carry their own terms (see its `NOTICE.md`).
 
 ## Where this is wired in
 
